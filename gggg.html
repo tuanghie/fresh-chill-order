@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Fresh & Chill - Đặt hàng</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:url('https://i.ibb.co/7zHx4Jh/fruit-background.jpg') no-repeat center/cover;background-size:cover;color:#2c3e50;overflow-x:hidden;}
+header{background:rgba(46,204,113,0.8);backdrop-filter:blur(5px);padding:20px;text-align:center;color:white;font-size:28px;font-weight:bold;letter-spacing:2px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.quick-nav{display:flex;overflow-x:auto;gap:8px;padding:8px;background:rgba(46,204,113,0.85);backdrop-filter:blur(5px);position:sticky;top:68px;z-index:15;}
+.quick-nav button{flex:0 0 auto;padding:6px 12px;border:none;border-radius:8px;background:#fff;color:#27ae60;font-weight:bold;cursor:pointer;transition:0.3s;}
+.quick-nav button:hover{background:#27ae60;color:#fff;}
+.menu{display:flex;overflow-x:auto;gap:20px;padding:20px;scroll-snap-type:x mandatory;scroll-behavior:smooth;cursor:grab;}
+.menu.active{cursor:grabbing;}
+.item{flex:0 0 220px;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.2);padding:10px;text-align:center;scroll-snap-align:start;transition:transform 0.4s ease,box-shadow 0.3s ease;cursor:pointer;position:relative;}
+.item:hover{transform:scale(1.08);box-shadow:0 8px 25px rgba(0,0,0,0.35);}
+.item img{width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:8px;transition:transform 0.4s ease;}
+.item:hover img{transform:scale(1.12);}
+.item h3{margin:8px 0 5px;font-weight:bold;}
+.item p{margin:5px 0;font-weight:bold;color:#27ae60;}
+.preview-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:1000;opacity:0;transition:opacity 0.3s ease;}
+.preview-overlay.show{display:flex;opacity:1;}
+.preview-box{background:rgba(255,255,255,0.95);padding:20px;border-radius:15px;width:90%;max-width:400px;text-align:center;position:relative;transform:scale(0.9);transition:transform 0.3s ease;}
+.preview-overlay.show .preview-box{transform:scale(1);}
+.preview-box img{width:100%;height:250px;object-fit:cover;border-radius:12px;transition:transform 0.3s ease;}
+.preview-box img:hover{transform:scale(1.05);}
+.preview-box h3{margin:10px 0 5px;font-weight:bold;}
+.preview-box p{margin:5px 0;font-size:16px;font-weight:bold;}
+.preview-box input{width:60px;padding:5px;margin:8px 0;}
+.preview-box button{margin-top:10px;width:80%;padding:10px;font-size:16px;}
+.preview-box .close{position:absolute;top:10px;right:15px;font-size:24px;cursor:pointer;}
+#floatingCart{position:fixed;bottom:20px;right:20px;background:#27ae60;color:white;padding:12px 18px;border-radius:50px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);font-weight:bold;z-index:999;transition:transform 0.3s ease;}
+#floatingCart:hover{transform:scale(1.05);}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);display:none;justify-content:center;align-items:center;z-index:1000;}
+.overlay.show{display:flex;}
+.popup{background:rgba(255,255,255,0.95);padding:20px;border-radius:18px;width:90%;max-width:400px;max-height:80%;overflow-y:auto;color:#2c3e50;position:relative;}
+.popup h2{text-align:center;margin-bottom:15px;}
+.popup .close{position:absolute;top:10px;right:15px;font-size:22px;cursor:pointer;color:#333;}
+.cart-item{display:flex;justify-content:space-between;margin:8px 0;}
+.cart-item button{background:red;color:white;border:none;border-radius:4px;cursor:pointer;padding:2px 6px;}
+footer{background:rgba(46,204,113,0.8);color:white;text-align:center;padding:15px;margin-top:10px;}
+@media(min-width:601px){.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;padding:30px;scroll-snap-type:none;}.item{flex:auto;scroll-snap-align:none;}}
+</style>
+</head>
+<body>
+<header>🍹 Fresh & Chill</header>
+
+<div class="quick-nav">
+  <button onclick="scrollToItem(0)">Dứa</button>
+  <button onclick="scrollToItem(1)">Trà chanh</button>
+  <button onclick="scrollToItem(2)">Cam</button>
+  <button onclick="scrollToItem(3)">Xoài</button>
+  <button onclick="scrollToItem(4)">Dưa hấu</button>
+</div>
+
+<div class="menu" id="menu">
+  <div class="item" data-name="Nước ép dứa" data-price="20000" data-img="https://i.ibb.co/5GTV9c7/pineapple-low.jpg"><img src="https://i.ibb.co/5GTV9c7/pineapple-low.jpg"><h3>Nước ép dứa</h3><p>20,000đ</p></div>
+  <div class="item" data-name="Trà chanh" data-price="12000" data-img="https://i.ibb.co/pJRmP0q/trachanh-low.jpg"><img src="https://i.ibb.co/pJRmP0q/trachanh-low.jpg"><h3>Trà chanh</h3><p>12,000đ</p></div>
+  <div class="item" data-name="Nước cam" data-price="18000" data-img="https://i.ibb.co/WKsrJZw/cam-low.jpg"><img src="https://i.ibb.co/WKsrJZw/cam-low.jpg"><h3>Nước cam</h3><p>18,000đ</p></div>
+  <div class="item" data-name="Sinh tố xoài" data-price="25000" data-img="https://i.ibb.co/XV9X6LT/xoai-low.jpg"><img src="https://i.ibb.co/XV9X6LT/xoai-low.jpg"><h3>Sinh tố xoài</h3><p>25,000đ</p></div>
+  <div class="item" data-name="Nước ép dưa hấu" data-price="22000" data-img="https://i.ibb.co/QKwxW5d/duahau-low.jpg"><img src="https://i.ibb.co/QKwxW5d/duahau-low.jpg"><h3>Nước ép dưa hấu</h3><p>22,000đ</p></div>
+</div>
+
+<div class="preview-overlay" id="previewOverlay">
+  <div class="preview-box" id="previewBox">
+    <span class="close" onclick="closePreview()">&times;</span>
+    <img id="previewImg">
+    <h3 id="previewName"></h3>
+    <p id="previewPrice"></p>
+    <input type="number" id="previewQty" min="1" value="1">
+    <button onclick="addPreviewToCart()">Thêm vào giỏ / Đặt ngay</button>
+  </div>
+</div>
+
+<div id="floatingCart" onclick="openCart()">🛒 <span id="cartCount">0</span> món | <span id="cartTotal">0</span>đ</div>
+
+<div class="overlay" id="overlay">
+  <div class="popup">
+    <span class="close" onclick="closeCart()">&times;</span>
+    <h2>🛍️ Giỏ hàng</h2>
+    <div id="cart"></div>
+    <button onclick="clearCart()" style="background:red;">Xóa tất cả</button>
+    <p><strong>Tổng: <span id="total">0</span>đ</strong></p>
+    <input type="text" id="customerName" placeholder="Họ tên">
+    <input type="text" id="customerAddress" placeholder="Địa chỉ giao hàng">
+    <input type="text" id="customerPhone" placeholder="Số điện thoại">
+    <button onclick="sendOrder()">📩 Gửi Messenger</button>
+  </div>
+</div>
+
+<script>
+let cart=[],previewItem=null;
+function isMobile(){return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);}
+function updateFloatingCart(){let c=cart.reduce((a,i)=>a+i.qty,0),t=cart.reduce((a,i)=>a+i.qty*i.price,0);document.getElementById("cartCount").innerText=c;document.getElementById("cartTotal").innerText=t.toLocaleString();}
+function scrollToItem(i){const items=document.querySelectorAll('.menu .item');if(items[i])items[i].scrollIntoView({behavior:'smooth',inline:'center'});}
+function renderCart(){let cartDiv=document.getElementById("cart");cartDiv.innerHTML="";let total=0;cart.forEach((i,idx)=>{let line=document.createElement("div");line.className="cart-item";line.innerHTML=`${i.name} x ${i.qty} = ${(i.price*i.qty).toLocaleString()}đ <button onclick="removeItem(${idx})">X</button>`;cartDiv.appendChild(line);total+=i.price*i.qty;});document.getElementById("total").innerText=total.toLocaleString();}
+function addToCart(name,price,qty,srcImg=null){qty=parseInt(qty);if(qty<1){alert("Số lượng phải >=1");return;}let item=cart.find(i=>i.name===name);if(item)item.qty+=qty;else cart.push({name,price,qty});updateFloatingCart();renderCart();if(srcImg)animateFlyToCart(srcImg);if(isMobile())quickOrderMsg(name,price,qty);}
+function removeItem(idx){cart.splice(idx,1);renderCart();updateFloatingCart();}
+function clearCart(){if(confirm("Bạn có chắc muốn xóa tất cả món?")){cart=[];renderCart();updateFloatingCart();}}
+function openCart(){document.getElementById("overlay").classList.add("show");}
+function closeCart(){document.getElementById("overlay").classList.remove("show");}
+function sendOrder(){let name=document.getElementById("customerName").value.trim(),addr=document.getElementById("customerAddress").value.trim(),phone=document.getElementById("customerPhone").value.trim();if(!name||!addr||!phone){alert("Vui lòng nhập đầy đủ Họ tên, Địa chỉ, SĐT");return;}if(cart.length===0){alert("Giỏ hàng trống!");return;}let total=0,msg=`📋 HÓA ĐƠN ĐẶT HÀNG\n👤 ${name}\n🏠 ${addr}\n📞 ${phone}\n\n🛒 Chi tiết:\n`;cart.forEach(i=>{let t=i.price*i.qty;total+=t;msg+=`- ${i.name} x ${i.qty} = ${t.toLocaleString()}đ\n`;});msg+=`\n💰 Tổng cộng: ${total.toLocaleString()}đ\n✅ Vui lòng xác nhận đơn hàng.`;const page='tua.nghie';const mLink=`https://m.me/${page}?ref=${encodeURIComponent(msg)}`;if(isMobile()){window.location.href=mLink;}else{window.open(mLink,"_blank");}}
+document.querySelectorAll('.menu .item').forEach(el=>el.addEventListener('click',()=>{previewItem=el;document.getElementById('previewImg').src=el.dataset.img;document.getElementById('previewName').innerText=el.dataset.name;document.getElementById('previewPrice').innerText=parseInt(el.dataset.price).toLocaleString()+'đ';document.getElementById('previewQty').value=1;document.getElementById('previewOverlay').classList.add('show');}));
+function closePreview(){document.getElementById('previewOverlay').classList.remove('show');}
+function addPreviewToCart(){if(previewItem){let qty=document.getElementById('previewQty').value;addToCart(previewItem.dataset.name,parseInt(previewItem.dataset.price),qty,previewItem.querySelector('img'));closePreview();}}
+function animateFlyToCart(img){let flyer=img.cloneNode(true),rect=img.getBoundingClientRect();flyer.style.position='fixed';flyer.style.left=rect.left+'px';flyer.style.top=rect.top+'px';flyer.style.width=rect.width+'px';flyer.style.height=rect.height+'px';flyer.style.transition='all 0.8s ease-in-out';flyer.style.zIndex=9999;document.body.appendChild(flyer);let cartIcon=document.getElementById('floatingCart').getBoundingClientRect();setTimeout(()=>{flyer.style.left=cartIcon.left+'px';flyer.style.top=cartIcon.top+'px';flyer.style.width='40px';flyer.style.height='40px';flyer.style.opacity='0.5';},50);setTimeout(()=>{document.body.removeChild(flyer);},900);}
+function quickOrderMsg(name,price,qty){if(!isMobile())return;let msg=`📋 Đặt hàng nhanh\n- ${name} x ${qty}\n💰 Tổng: ${(price*qty).toLocaleString()}đ\n✅ Vui lòng xác nhận đơn hàng.`;window.location.href=`https://m.me/tua.nghie?ref=${encodeURIComponent(msg)}`;}
+</script>
+
+<footer>📍 12A5, Trường Văn Hóa - Cục Đào Tạo | ☎️ 0904346995 | Facebook: Tuấn Nghiêm</footer>
+</body>
+</html>
